@@ -1,0 +1,136 @@
+<div class="container mx-auto mt-6 px-6 py-2 bg-gray-100 rounded-xl">
+    <h1 class="text-2xl mb-6">Weight Trends</h1>
+    <canvas id="weightChart" width="400" height="160"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        fetch("{% url 'weight_tracker:weight_data' %}")
+            .then(response => response.json())
+            .then(data => {
+                const ctx = document.getElementById('weightChart').getContext('2d');
+                const targetWeight = data.target_weight;
+
+                // Calculate min and max values for y-axis
+                const weights = data.weights;
+                const maxWeight = Math.max(...weights);
+                const minWeight = Math.min(...weights);
+                const range = 10;
+
+                const minY = minWeight < targetWeight ? minWeight - range : targetWeight - range;
+                const maxY = maxWeight > targetWeight ? maxWeight + range : targetWeight + range;
+
+                const annotations = {};
+                if (targetWeight !== null && targetWeight !== undefined) {
+                    annotations.line1 = {
+                        type: 'line',
+                        yMin: targetWeight,
+                        yMax: targetWeight,
+                        borderColor: 'rgba(255, 99, 132, 1)',
+                        borderWidth: 2,
+                        label: {
+                            content: 'Target Weight',
+                            enabled: true,
+                            position: 'end',
+                            backgroundColor: 'rgba(255, 99, 132, 0.8)',
+                            color: 'white',
+                            font: {
+                                size: 12,
+                                weight: 'bold',
+                            },
+                            padding: {
+                                top: 4,
+                                bottom: 4,
+                                left: 8, 
+                                right: 8,
+                            }
+                        }
+                    };
+                }
+
+                const weightChart = new Chart(ctx, {
+                    type: 'line',
+                    data: {
+                        labels: data.dates,
+                        datasets: [{
+                            label: 'Weight',
+                            data: data.weights,
+                            borderColor: 'rgba(75, 192, 192, 1)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            x: {
+                                type: 'time',
+                                time: {
+                                    unit: 'day'
+                                }
+                            },
+                            y: {
+                                beginAtZero: false,
+                                min: minY,
+                                max: maxY,
+                            },
+                        },
+                        plugins: {
+                            annotation: {
+                                annotations: annotations,
+                            },
+                            tooltip: {
+                                enabled: true,
+                                backgroundColor: 'rgba(0, 0, 0, 0.8)', // background color of the tooltip
+                                titleFont: {
+                                    size: 14, // font size of the title
+                                    weight: 'bold', // font weight of the title
+                                    family: 'Arial', // font family of the title
+                                    style: 'italic', // font style of the title
+                                    lineHeight: 1.2 // line height of the title
+                                },
+                                titleColor: '#ffffff', // color of the title text
+                                bodyFont: {
+                                    size: 12, // font size of the body text
+                                    family: 'Arial', // font family of the body text
+                                    style: 'normal', // font style of the body text
+                                    lineHeight: 1.2, // line height of the body text
+                                },
+                                bodyColor: '#ffffff', // Color of the body text
+                                borderColor: 'rgba(255, 99, 132, 1)', // Border color of the tooltip
+                                borderWidth: 1, // Border width of the tooltip
+                                padding: 10, // Padding inside the tooltip
+                                callbacks: {
+                                    label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) {
+                                            label += ': ';
+                                        }
+                                        if (context.parsed.y != null) {
+                                            label += context.parsed.y + ' lbs';
+                                        }
+                                        return label;
+                                    }
+                                }
+                            },
+                            legend: {
+                                display: true,
+                                position: 'top',
+                                labels: {
+                                    font: {
+                                        size: 12, 
+                                        family: 'Arial',
+                                        weight: 'bold',
+                                        style: 'normal'
+                                    },
+                                    color: '#000000'
+                                },
+                            }
+                        }
+                    }
+                });
+            });
+    });
+</script>

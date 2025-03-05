@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5 p-4 bg-light rounded-3">
+    <h1 class="h2 mb-4 text-center">Choose Your Service</h1>
+    <div class="row g-4">
+        <div class="col-md-6">
+            <a href="{% url 'weight_tracker:index' %}" class="btn btn-secondary d-block w-100 py-3 fs-5 rounded-3">
+                Weight Tracking
+            </a>
+        </div>
+        <div class="col-md-6">
+            <a href="{% url 'food_tracker:food_search' %}" class="btn btn-success d-block w-100 py-3 fs-5 rounded-3">
+                Food Intake
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

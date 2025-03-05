@@ -1,0 +1,36 @@
+{% if goal %}
+    <h1 class="text-2xl mb-6">{{ goal.get_goal_type_display }}</h1>
+    <p>Target Weight: <strong>{{ goal.target_weight }} lbs</strong></p>
+    {% if current_weight %}
+        <p>Current Weight: <strong>{{ current_weight }} lbs</strong></p>
+    {% endif %}
+    <p>Start Weight: <strong>{{ goal.start_weight }} lbs</strong></p>
+    <p>Target Date: <strong>{{ goal.target_date }}</strong></p>
+
+    {% if current_weight %}
+        {% if goal.goal_type == 'weight_loss' and current_weight <= goal.target_weight %}
+            <div class="bg-green-100 p-4 rounded-xl mt-6">
+                <h2 class="text-xl font-semibold">Congratulations! You have reached your goal!</h2>
+                <p>Would you like to set a new goal?</p>
+                <a href="{% url 'weight_tracker:set_goal' %}" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 inline-block">Set New Goal</a>
+            </div>
+        {% elif goal.goal_type == 'weight_gain' and current_weight >= goal.target_weight %}
+        <div class="bg-green-100 p-4 rounded-xl mt-6">
+            <h2 class="text-xl font-semibold">Congratulations! You have reached your goal!</h2>
+            <p>Would you like to set a new goal?</p>
+            <a href="{% url 'weight_tracker:set_goal' %}" class="bg-blue-500 text-white px-4 py-2 rounded mt-4 inline-block">Set New Goal</a>
+        </div>
+        {% else %}
+            <div class="progress-bar-container mt-6 bg-gray-500">
+                <div class="progress-bar bg-blue-400" style="width: {{ goal.progress_percentage }}%;"></div>
+            </div>
+            <p>{{ goal.progress_percentage }}% completed</p>
+            <a href="{% url 'weight_tracker:update_goal' goal.id %}" class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-xl mt-4 mr-4 inline-block shadow-lg">Update Goal</a>
+        {% endif %}
+    {% endif %}
+
+<a href="{% url 'weight_tracker:delete_goal' goal.id %}" class="bg-red-500 hover:bg-red-700 text-white px-4 py-2 rounded-xl mt-4 inline-block shadow-lg">Delete Goal</a>
+{% else %}
+    <p class="text-2xl mb-6">No goal set!</p>
+    <a href="{% url 'weight_tracker:set_goal' %}" class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 rounded-xl mt-4 inline-block">Set New Goal</a>
+{% endif %}

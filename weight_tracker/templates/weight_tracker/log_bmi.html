@@ -1,0 +1,25 @@
+{% extends 'weight_tracker/base.html' %}
+
+{% block title %}Log BMI{% endblock %}
+
+{% block content %}
+<form method="post" action="{% url 'weight_tracker:log_bmi' %}" enctype="multipart/form-data">
+    {% csrf_token %}
+
+    <div class="space-y-4">
+        {{ form.as_p }}
+    </div>
+
+    {% if form.errors or form.non_field_errors %} 
+        <div class="mb-3 p-6 bg-red-100 rounded-xl">
+            {% for field in form %}
+                {{ field.errors }}
+            {% endfor %}
+
+            {{ form.non_field_errors }}
+        </div>
+    {% endif %}
+
+    <button class="mt-6 py-4 px-8 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white">Save</button>
+</form>
+{% endblock %}

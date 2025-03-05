@@ -1,0 +1,157 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Food Database{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <h1 class="mb-4">Food Database</h1>
+    
+    <!-- Search Form -->
+    <div class="card mb-4">
+        <div class="card-body">
+            <form method="post" class="row g-3">
+                {% csrf_token %}
+                <div class="col-md-8">
+                    <input type="text" name="search" 
+                           class="form-control form-control-lg"
+                           placeholder="Search foods...">
+                </div>
+                <div class="col-md-4">
+                    <div class="d-grid gap-2 d-md-flex">
+                        <button type="submit" class="btn btn-primary btn-lg">
+                            <i class="bi bi-search"></i> Search
+                        </button>
+                        <a href="#" 
+                           class="btn btn-outline-secondary btn-lg">
+                            <i class="bi bi-plus-circle"></i> Add Custom
+                        </a>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Local Results -->
+    {% if results %}
+    <div class="card mb-4">
+        <div class="card-header bg-primary text-white">
+            <h4 class="mb-0">Local Database Results</h4>
+        </div>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                {% for food in results %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ food.name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {{ food.brand|default:"Generic" }}
+                            </h6>
+                            <p class="card-text text-muted small">
+                                Serving: {{ food.serving_size }}
+                            </p>
+                            <div class="row row-cols-4 g-2 text-center">
+                                <div class="col">
+                                    <div class="bg-light p-2 rounded">
+                                        <div class="text-primary fw-bold">{{ food.calories }}</div>
+                                        <small class="text-muted">CAL</small>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="bg-light p-2 rounded">
+                                        <div class="text-success fw-bold">{{ food.protein }}g</div>
+                                        <small class="text-muted">PRO</small>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="bg-light p-2 rounded">
+                                        <div class="text-warning fw-bold">{{ food.carbohydrates }}g</div>
+                                        <small class="text-muted">CARB</small>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="bg-light p-2 rounded">
+                                        <div class="text-danger fw-bold">{{ food.fats }}g</div>
+                                        <small class="text-muted">FAT</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <a href="#" 
+                               class="btn btn-sm btn-outline-primary">
+                                Log This Food
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- USDA Results -->
+    {% if usda_results %}
+    <div class="card mb-4">
+        <div class="card-header bg-info text-white">
+            <h4 class="mb-0">USDA Database Results</h4>
+        </div>
+        <div class="card-body">
+            <div class="row row-cols-1 row-cols-md-2 g-4">
+                {% for food in usda_results %}
+                <div class="col">
+                    <div class="card h-100">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ food.name }}</h5>
+                            <h6 class="card-subtitle mb-2 text-muted">
+                                {{ food.brand|default:"USDA Food" }}
+                            </h6>
+                            <p class="card-text text-muted small">
+                                {{ food.serving_size }}
+                            </p>
+                            <div class="row row-cols-4 g-2 text-center">
+                                <div class="col">
+                                    <div class="bg-light p-2 rounded">
+                                        <div class="text-primary fw-bold">{{ food.calories }}</div>
+                                        <small class="text-muted">CAL</small>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="bg-light p-2 rounded">
+                                        <div class="text-success fw-bold">{{ food.protein }}g</div>
+                                        <small class="text-muted">PRO</small>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="bg-light p-2 rounded">
+                                        <div class="text-warning fw-bold">{{ food.carbohydrates }}g</div>
+                                        <small class="text-muted">CARB</small>
+                                    </div>
+                                </div>
+                                <div class="col">
+                                    <div class="bg-light p-2 rounded">
+                                        <div class="text-danger fw-bold">{{ food.fats }}g</div>
+                                        <small class="text-muted">FAT</small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="card-footer bg-transparent">
+                            <form method="post" action="{% url 'food_tracker:save_usda_food' %}">
+                                {% csrf_token %}
+                                <input type="hidden" name="fdc_id" value="{{ food.fdc_id }}">
+                                <button type="submit" class="btn btn-sm btn-success">
+                                    <i class="bi bi-save"></i> Save to DB
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

@@ -37,6 +37,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "core",
+    "weight_tracker",
+    "food_tracker",
 ]
 
 MIDDLEWARE = [
@@ -121,3 +124,5 @@ STATIC_URL = "static/"
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+USDA_API_KEY = "HUjzzXwC7MSu3dCjcwvvPB297hFawJafphdZJcb4"

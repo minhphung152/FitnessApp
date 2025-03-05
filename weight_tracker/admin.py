@@ -1,3 +1,7 @@
 from django.contrib import admin
 
-# Register your models here.
+from .models import WeightLog, Goal, BMILog
+
+admin.site.register(WeightLog)
+admin.site.register(Goal)
+admin.site.register(BMILog)

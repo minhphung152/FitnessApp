@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 
-from tracker.models import WeightLog, Goal, BMILog
+from weight_tracker.models import WeightLog, Goal, BMILog
 
 from .forms import SignupForm
 
