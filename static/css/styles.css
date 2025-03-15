@@ -1,0 +1,44 @@
+.progress-bar-container {
+    width: 100%;
+    background-color: rgb(107 114 128);
+    border-radius: 8px;
+    overflow: hidden;
+    height: 24px;
+    margin-top: 20px;
+}
+
+.progress-bar {
+    height: 100%;
+    background-color: rgb(59 130 246);
+    text-align: center;
+    line-height: 24px;
+    color: white;
+    border-radius: 8px;
+}
+
+th a {
+    position: relative;
+    padding-right: 15px;
+}
+
+th a::after {
+    content: '';
+    position: absolute;
+    right: -5px;
+    top: 50%;
+    transform: translateY(-50%);
+    opacity: 0.5;
+}
+
+th a:hover {
+    text-decoration: underline !important;
+}
+
+.btn-outline-danger {
+    transition: all 0.2 ease-in-out;
+}
+
+.btn-outline-danger:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 8px rgba(220, 53, 69, 0.25);
+}

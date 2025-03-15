@@ -1,35 +1,51 @@
 {% extends 'core/base.html' %}
+{% load widget_tweaks %}
 
-{% block title %}Log In{% endblock %}
+{% block title %}Login - Health Tracker{% endblock %}
 
 {% block content %}
-    <div class="w-1/2 my-6 mx-auto p-6 bg-gray-100 rounded-xl">
-        <h1 class="mb-6 text-3xl">Log In</h1>
+<div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 mt-5">
+                <div class="card-body p-4">
+                    <h2 class="card-title text-center mb-4">Login</h2>
+                    
+                    {% if form.errors %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        Invalid username or password. Please try again.
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                    {% endif %}
 
-        <form method="post" action=".">
-            {% csrf_token %}
+                    <form method="post" novalidate>
+                        {% csrf_token %}
+                        <input type="hidden" name="next" value="{{ next }}">
+                        
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username</label>
+                            <input type="text" class="form-control" name="username" required>
+                        </div>
 
-            <div class="mb-3">
-                <label class="inline-block mb-2">Username</label><br>
-                {{ form.username }}
-            </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password</label>
+                            <input type="password" class="form-control" name="password" required>
+                        </div>
 
-            <div class="mb-3">
-                <label class="inline-block mb-2">Password</label><br>
-                {{ form.password }}
-            </div>
+                        <div class="d-grid mt-4">
+                            <button type="submit" class="btn btn-primary btn-lg">Sign In</button>
+                        </div>
 
-            {% if form.errors or form.non_field_errors %}
-                <div class="mb-3 p-6 bg-red-100 rounded-xl">
-                    {% for field in form %}
-                        {{ field.errors }}
-                    {% endfor %}
-
-                    {{ form.non_field_errors }}
+                        <div class="text-center mt-3">
+                            <a href="#" class="text-decoration-none">Forgot Password?</a>
+                        </div>
+                    </form>
                 </div>
-            {% endif %}
-
-            <button class="py-4 px-8 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white">Submit</button>
-        </form>
+                <div class="card-footer text-center py-3">
+                    Don't have an account? <a href="{% url 'core:register' %}" class="text-decoration-none">Register here</a>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
 {% endblock %}

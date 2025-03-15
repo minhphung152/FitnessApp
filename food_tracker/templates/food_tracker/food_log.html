@@ -1,0 +1,169 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Food Log{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h2>
+                {% if view_mode == 'daily' %}
+                    Food Log for {{ selected_date|date:"M d, Y" }}
+                {% else %}
+                    All Food Entries
+                {% endif %}
+            </h2>   
+            <div class="btn-group mt-2">
+                <a href="?view=daily&date={% if selected_date %}{{ selected_date|date:'Y-m-d' }}{% else %}{{ timezone.now|date:'Y-m-d' }}{% endif %}"
+                   class="btn btn-sm {% if view_mode == 'daily' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    Daily View
+                </a>
+                <a href="?view=all"
+                   class="btn btn-sm {% if view_mode == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                    All Entries
+                </a>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'food_tracker:food_search' %}" class="btn btn-outline-secondary">
+                Search Food
+            </a>
+        </div>
+        <div>
+            {% if not is_default_sort %}
+                <a href="{% url 'food_tracker:food_log' %}" class="btn btn-outline-danger ms-2">Reset Sorting</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Date Navigation (Daily View Only) -->
+    {% if view_mode == 'daily' %}
+    <div class="row mb-4">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-body py-2">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <a href="?date={{ previous_date|date:'Y-m-d' }}&sort={{ current_sort }}"
+                            class="btn btn-outline-primary {% if previous_date > selected_date %}disabled{% endif %}">
+                            ← Previous Day
+                        </a>
+                        
+                        <form method="GET" class="mx-3" style="min-width: 200px;">
+                            <input type="date" 
+                                    name="date" 
+                                    value="{{ selected_date|date:'Y-m-d' }}"
+                                    class="form-control"
+                                    onchange="this.form.submit()">
+                            <input type="hidden" name="sort" value="{{ current_sort }}">
+                        </form>
+
+                        <a href="?date={{ next_date|date:'Y-m-d' }}&sort={{ current_sort }}"
+                            class="btn btn-outline-primary {% if next_date > timezone.now|date:'Y-m-d' %}disabled{% endif %}">
+                            Next Day →
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- Meal Type Filter -->
+    <div class="mb-4">
+        <div class="btn-group">
+            <a href="?view={{ view_mode }}{%if view_mode == 'daily' %}&date={{ selected_date|date:'Y-m-d' }}&{% endif %}&meal=all"
+                class="btn btn-sm {% if meal_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                All Meals
+            </a>
+            {% for value, label in meal_choices %}
+            <a href="?view={{ view_mode }}{%if view_mode == 'daily' %}&date={{ selected_date|date:'Y-m-d' }}&{% endif %}&meal={{ value }}"
+                class="btn btn-sm {% if meal_filter == value %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                {{ label }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <!-- Food Entries -->
+    <div class="card shadow">
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Meal</th>
+                            <th>
+                                <a href="?view={{ view_mode }}{% if view_mode == 'daily' %}&date={{ selected_date|date:'Y-m-d' }}{% endif %}&sort={% if current_sort == 'date' %}-date{% else %}date{% endif %}"
+                                   class="text-decoration-none text-dark">
+                                    Date
+                                    {% if current_sort == '-date' %}↓
+                                    {% elif current_sort == 'date' %}↑
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th>
+                                <a href="?view={{ view_mode }}{% if view_mode == 'daily' %}&date={{ selected_date|date:'Y-m-d' }}{% endif %}&sort={% if current_sort == 'name' %}-name{% else %}name{% endif %}"
+                                   class="text-decoration-none text-dark">
+                                    Food Item
+                                    {% if current_sort == '-name' %}↓
+                                    {% elif current_sort == 'name' %}↑
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="text-end">
+                                <a href="?view={{ view_mode }}{% if view_mode == 'daily' %}&date={{ selected_date|date:'Y-m-d' }}{% endif %}&sort={% if current_sort == 'servings' %}-servings{% else %}servings{% endif %}"
+                                   class="text-decoration-none text-dark">
+                                    Servings
+                                    {% if current_sort == '-servings' %}↓
+                                    {% elif current_sort == 'servings' %}↑
+                                    {% endif %}
+                                </a>
+                            </th>
+                            <th class="text-end">
+                                <a href="?view={{ view_mode }}{% if view_mode == 'daily' %}&date={{ selected_date|date:'Y-m-d' }}{% endif %}&sort={% if current_sort == 'calories' %}-calories{% else %}calories{% endif %}"
+                                   class="text-decoration-none text-dark">
+                                    Calories
+                                    {% if current_sort == '-calories' %}↓
+                                    {% elif current_sort == 'calories' %}↑
+                                    {% endif %}
+                                </a>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for entry in food_entries %}
+                        <tr>
+                            <td>{{ entry.get_meal_type_display }}</td>
+                            <td>{{ entry.date|date:"M d, Y" }}</td>
+                            <td>
+                                {{ entry.food_item.name }}
+                                {% if entry.food_item.brand %}
+                                <small class="text-muted">({{ entry.food_item.brand }})</small>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">{{ entry.servings }}</td>
+                            <td class="text-end">{{ entry.food_item.calories }}</td>
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="4" class="text-center">No food entries found</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                    <tfoot class="table-group-divider">
+                        <tr>
+                            <th colspan="4" class="text-end">Total:</th>
+                            <th class="text-end">{{ total_calories }} kcal</th>
+                        </tr>
+                        <tr>
+                            <td colspan="4" class="text-muted small">
+                                Showing {{ total_entries }} entries{% if view_mode == 'daily' %} for {{ selected_date|date:"M d, Y" }}{% endif %}
+                            </td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
