@@ -1,25 +1,49 @@
-{% extends 'weight_tracker/base.html' %}
+{% extends 'core/base.html' %}
 
 {% block title %}Log BMI{% endblock %}
 
 {% block content %}
-<form method="post" action="{% url 'weight_tracker:log_bmi' %}" enctype="multipart/form-data">
-    {% csrf_token %}
-
-    <div class="space-y-4">
-        {{ form.as_p }}
-    </div>
-
-    {% if form.errors or form.non_field_errors %} 
-        <div class="mb-3 p-6 bg-red-100 rounded-xl">
-            {% for field in form %}
-                {{ field.errors }}
-            {% endfor %}
-
-            {{ form.non_field_errors }}
+<div class="container mt-4">
+    <div class="card shadow-lg mx-auto" style="max-width: 600px;">
+        <div class="card-header bg-primary text-white">
+            <h2 class="h4 mb-0">Log BMI</h2>
         </div>
-    {% endif %}
+        
+        <form method="post" action="{% url 'weight_tracker:log_bmi' %}" enctype="multipart/form-data" class="card-body">
+            {% csrf_token %}
 
-    <button class="mt-6 py-4 px-8 text-lg bg-blue-500 hover:bg-blue-700 rounded-xl text-white">Save</button>
-</form>
+            {% if form.errors or form.non_field_errors %}
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                <h5 class="alert-heading">Please fix these errors:</h5>
+                <ul class="mb-0">
+                    {% for error in form.non_field_errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                    {% for field in form %}
+                        {% for error in field.errors %}
+                            <li>{{ field.label }}: {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+            {% endif %}
+
+            <div class="row g-3 rounded-3">
+                {{ form.as_p}}
+            </div>
+
+            <div class="d-grid gap-2 mt-4">
+                <button type="submit" class="btn btn-primary btn-lg shadow-sm">
+                    Save
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% block extra_js %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}
 {% endblock %}

@@ -19,6 +19,4 @@ urlpatterns = [
 
     path('log_bmi/', views.log_bmi, name='log_bmi'),
     path('bmi/<int:pk>', views.bmi_detail, name='bmi_detail'),
-
-    path('weight_logs/', views.weight_logs, name='weight_logs'), 
 ]

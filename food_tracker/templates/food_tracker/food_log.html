@@ -6,7 +6,7 @@
 <div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-4">
         <div>
-            <h2>
+            <h2 class="text-white">
                 {% if view_mode == 'daily' %}
                     Food Log for {{ selected_date|date:"M d, Y" }}
                 {% else %}
@@ -15,17 +15,17 @@
             </h2>   
             <div class="btn-group mt-2">
                 <a href="?view=daily&date={% if selected_date %}{{ selected_date|date:'Y-m-d' }}{% else %}{{ timezone.now|date:'Y-m-d' }}{% endif %}"
-                   class="btn btn-sm {% if view_mode == 'daily' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                   class="btn btn-sm {% if view_mode == 'daily' %}btn-primary{% else %}btn-outline-primary text-white{% endif %}">
                     Daily View
                 </a>
                 <a href="?view=all"
-                   class="btn btn-sm {% if view_mode == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                   class="btn btn-sm {% if view_mode == 'all' %}btn-primary{% else %}btn-outline-primary text-white{% endif %}">
                     All Entries
                 </a>
             </div>
         </div>
         <div>
-            <a href="{% url 'food_tracker:food_search' %}" class="btn btn-outline-secondary">
+            <a href="{% url 'food_tracker:food_search' %}" class="btn btn-primary">
                 Search Food
             </a>
         </div>
@@ -72,12 +72,12 @@
     <div class="mb-4">
         <div class="btn-group">
             <a href="?view={{ view_mode }}{%if view_mode == 'daily' %}&date={{ selected_date|date:'Y-m-d' }}&{% endif %}&meal=all"
-                class="btn btn-sm {% if meal_filter == 'all' %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                class="btn btn-sm {% if meal_filter == 'all' %}btn-primary{% else %}btn-outline-primary text-white{% endif %}">
                 All Meals
             </a>
             {% for value, label in meal_choices %}
             <a href="?view={{ view_mode }}{%if view_mode == 'daily' %}&date={{ selected_date|date:'Y-m-d' }}&{% endif %}&meal={{ value }}"
-                class="btn btn-sm {% if meal_filter == value %}btn-primary{% else %}btn-outline-primary{% endif %}">
+                class="btn btn-sm {% if meal_filter == value %}btn-primary{% else %}btn-outline-primary text-white{% endif %}">
                 {{ label }}
             </a>
             {% endfor %}
